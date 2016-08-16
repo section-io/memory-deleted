@@ -107,7 +107,7 @@ var processEvent = function(event, context) {
         context.fail("Unknown command");
     } else {
         var searchText = match[1];
-        getMemeImageUrl("I'm a delivery boy")
+        getMemeImageUrl(searchText)
             .then((url) => context.succeed(url))
             .catch((err) => {
                 console.fail(err);
