@@ -22,6 +22,8 @@
 
 require 'request';
 
+const kmsEncryptedToken = 'AQECAHiEnAZqKr1pw8f8cxQuJ6eUTg1t8er4Bv88iQgCuVCXKAAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKJn5+gIatDQ69w0ZgIBEIAzGjb/qCbiNL/avu0TGDgQJ88yfR+ToAZjToJueVTMVGegUANNQ/5DK9DHWiBFkmk0qYOD';
+
 // accept slack command `/morbotron go <search text>`
 // later `go` could be augmented with other commands for previewing or customising results
 var searchText = 'good news everyone';
