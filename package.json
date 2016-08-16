@@ -2,7 +2,7 @@
     "name": "memory-deleted",
     "version": "1.0.0",
     "description": "Morbotron Slack bot",
-    "main": "bot.js",
+    "main": "index.js",
     "repository": "https://github.com/section-io/memory-deleted",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,6 +10,7 @@
     "author": "Jason Stangroome",
     "license": "MIT",
     "dependencies": {
+        "aws-sdk": "^2.5.1",
         "qs": "^6.2.1",
         "request": "^2.74.0",
         "request-promise": "^4.1.1"

@@ -20,8 +20,10 @@
 
 // pseudo-code follows:
 
+var AWS = require('aws-sdk');
 var rp = require('request-promise');
 var qs = require('qs');
+var token;
 
 const kmsEncryptedToken = 'AQECAHiEnAZqKr1pw8f8cxQuJ6eUTg1t8er4Bv88iQgCuVCXKAAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKJn5+gIatDQ69w0ZgIBEIAzGjb/qCbiNL/avu0TGDgQJ88yfR+ToAZjToJueVTMVGegUANNQ/5DK9DHWiBFkmk0qYOD';
 
@@ -62,8 +64,53 @@ function getMemeImageUrl(searchText) {
     return promise;
 }
 
-getMemeImageUrl("I'm a delivery boy")
-    .then((url) => console.log(url))
-    .catch((err) => {
-        console.error(err);
-    });
+exports.handler = function (event, context) {
+    if (token) {
+        // Container reuse, simply process the event with the key in memory
+        processEvent(event, context);
+    } else if (kmsEncryptedToken && kmsEncryptedToken !== "<kmsEncryptedToken>") {
+        var encryptedBuf = new Buffer(kmsEncryptedToken, 'base64');
+        var cipherText = {CiphertextBlob: encryptedBuf};
+
+        var kms = new AWS.KMS();
+        kms.decrypt(cipherText, function (err, data) {
+            if (err) {
+                console.log("Decrypt error: " + err);
+                context.fail(err);
+            } else {
+                token = data.Plaintext.toString('ascii');
+                processEvent(event, context);
+            }
+        });
+    } else {
+        context.fail("Token has not been set.");
+    }
+};
+
+var processEvent = function(event, context) {
+    var body = event.body;
+    var params = qs.parse(body);
+    var requestToken = params.token;
+    if (requestToken !== token) {
+        console.error("Request token (" + requestToken + ") does not match exptected");
+        context.fail("Invalid request token");
+    }
+
+    var user = params.user_name;
+    var command = params.command;
+    var channel = params.channel_name;
+    var commandText = params.text;
+
+    //context.succeed(user + " invoked " + command + " in " + channel + " with the following text: " + commandText);
+    var match = /^go +(.+)$/.exec(commandText);
+    if (!match) {
+        context.fail("Unknown command");
+    } else {
+        var searchText = match[1];
+        getMemeImageUrl("I'm a delivery boy")
+            .then((url) => context.succeed(url))
+            .catch((err) => {
+                console.fail(err);
+            });
+    }
+};
