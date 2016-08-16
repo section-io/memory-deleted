@@ -1,11 +1,17 @@
 {
-  "name": "memory-deleted",
-  "version": "1.0.0",
-  "description": "",
-  "main": "bot.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT"
+    "name": "memory-deleted",
+    "version": "1.0.0",
+    "description": "Morbotron Slack bot",
+    "main": "bot.js",
+    "repository": "https://github.com/section-io/memory-deleted",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Jason Stangroome",
+    "license": "MIT",
+    "dependencies": {
+        "qs": "^6.2.1",
+        "request": "^2.74.0",
+        "request-promise": "^4.1.1"
+    }
 }

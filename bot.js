@@ -20,7 +20,8 @@
 
 // pseudo-code follows:
 
-require 'request';
+var rp = require('request-promise');
+var qs = require('qs');
 
 const kmsEncryptedToken = 'AQECAHiEnAZqKr1pw8f8cxQuJ6eUTg1t8er4Bv88iQgCuVCXKAAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKJn5+gIatDQ69w0ZgIBEIAzGjb/qCbiNL/avu0TGDgQJ88yfR+ToAZjToJueVTMVGegUANNQ/5DK9DHWiBFkmk0qYOD';
 
@@ -28,33 +29,35 @@ const kmsEncryptedToken = 'AQECAHiEnAZqKr1pw8f8cxQuJ6eUTg1t8er4Bv88iQgCuVCXKAAAA
 // later `go` could be augmented with other commands for previewing or customising results
 var searchText = 'good news everyone';
 
-request.get('https://morbotron.com/api/search', { q: searchText })
-  .then((json) => {
-    if (json.length && json[0].Episode && json[0].Timestamp) {
-      return request.get('https://morbotron.com/api/caption', {
-        e: json[0].Episode,
-        t: json[0].Timestamp
-      });
-    } else {
-      // no results (seems to be 200 OK with empty array)
-    }
-  })
-  .then((json) => {
-    if (json.Subtitles && json.Subtitles.length) {
-      var lines = json.Subtitles.sort(sub => sub.RepresentativeTimestamp)
-        .map(sub => sub.Content)
-        .join('\n');
+rp({ url: 'https://morbotron.com/api/search', qs: { q: searchText }, json: true })
+    .then((json) => {
+        if (json.length && json[0].Episode && json[0].Timestamp) {
+            this.episode = json[0].Episode;
+            this.timestamp = json[0].Timestamp;
+            return rp({ url: 'https://morbotron.com/api/caption', qs: {
+                e: this.episode,
+                t: this.timestamp,
+            }, json: true });
+        } else {
+            throw new Error('No search results');
+        }
+    })
+    .then((json) => {
+        if (json.Subtitles && json.Subtitles.length) {
+            var lines = json.Subtitles.sort(sub => sub.RepresentativeTimestamp)
+                .map(sub => sub.Content)
+                .join('\n');
 
-      var encoded = new Buffer(lines).toString('base64')
-        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+            var encoded = new Buffer(lines).toString('base64')
+                .replace(/\+/g, '-').replace(/\//g, '_');
 
-      var url = `https://morbotron.com/meme/${episode}/${timestamp}.jpg`;
-
-      return request.get(url, { b64lines: encoded });
-    } else {
-      // something went wrong. tends to be a 404 if episode or timestamp is missing
-    }
-  })
-  .then((image) => {
-    // post image to Slack
-  });
+            var url = `https://morbotron.com/meme/${this.episode}/${this.timestamp}.jpg`;
+            var querystring = qs.stringify({ b64lines: encoded })
+            console.log(`${url}?${querystring}`);
+        } else {
+            throw new Error('No subtitles for search result');
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+    });
