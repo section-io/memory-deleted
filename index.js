@@ -47,7 +47,10 @@ function getMemeImageUrl(searchText) {
         })
         .then((json) => {
             if (json.Subtitles && json.Subtitles.length) {
-                var lines = json.Subtitles.sort(sub => sub.RepresentativeTimestamp)
+                var lines = json.Subtitles
+                    .sort(function (a, b) {
+                        return a.RepresentativeTimestamp - b.RepresentativeTimestamp;
+                    })
                     .map(sub => sub.Content)
                     .join('\n');
 
