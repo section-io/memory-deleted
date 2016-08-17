@@ -108,7 +108,16 @@ var processEvent = function(event, context) {
     } else {
         var searchText = match[1];
         getMemeImageUrl(searchText)
-            .then((url) => context.succeed(url))
+            .then((url) => {
+                context.succeed({
+                    attachments: [
+                        {
+                            title: searchText,
+                            image_url: url,
+                        }
+                    ]
+                });
+            })
             .catch((err) => {
                 console.fail(err);
             });
