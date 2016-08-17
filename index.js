@@ -112,7 +112,9 @@ var processEvent = function(event, context) {
         var searchText = match[1];
         getMemeImageUrl(searchText)
             .then((url) => {
+                // TODO respond via response_url to bypass 3-second timeout https://api.slack.com/slash-commands#responding_to_a_command
                 context.succeed({
+                    response_type: 'in_channel',
                     attachments: [
                         {
                             title: searchText,
