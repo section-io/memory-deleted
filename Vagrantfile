@@ -8,6 +8,13 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".git/", "node_modules/"]
   config.vm.provision "shell", inline: <<-SHELL
     curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
-    yum -y install nodejs
+    yum -y install ntp nodejs
+    npm install -g serverless
+    curl -O https://bootstrap.pypa.io/get-pip.py
+    python get-pip.py
+    pip install awscli
+    #aws configure
+    # cd /vagrant && npm install && serverless deploy
+    # serverless invoke --function slack --path event.json
   SHELL
 end

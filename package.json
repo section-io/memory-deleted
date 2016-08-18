@@ -10,7 +10,6 @@
     "author": "Jason Stangroome",
     "license": "MIT",
     "dependencies": {
-        "aws-sdk": "^2.5.1",
         "qs": "^6.2.1",
         "request": "^2.74.0",
         "request-promise": "^4.1.1"

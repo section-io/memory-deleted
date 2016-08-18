@@ -25,7 +25,7 @@ var rp = require('request-promise');
 var qs = require('qs');
 var token;
 
-const kmsEncryptedToken = 'AQECAHiEnAZqKr1pw8f8cxQuJ6eUTg1t8er4Bv88iQgCuVCXKAAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKJn5+gIatDQ69w0ZgIBEIAzGjb/qCbiNL/avu0TGDgQJ88yfR+ToAZjToJueVTMVGegUANNQ/5DK9DHWiBFkmk0qYOD';
+const kmsEncryptedToken = 'AQECAHgQgkf5FS+MdwrQzHaZikgLKo3iOHDmv/38KcoCalmIkQAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJhRw/N1/qR+Vsx5rwIBEIAz86ICuPp++XHkbYB+jeIlWWQuK2ojs9aLifdodVpnc04Vlk3beVbXesndjLDZLY21WNs5';
 
 // accept slack command `/morbotron go <search text>`
 // later `go` could be augmented with other commands for previewing or customising results
@@ -67,6 +67,7 @@ function getMemeImageUrl(searchText) {
     return promise;
 }
 
+//exports.handler = function (event, context, cb) {
 exports.handler = function (event, context) {
     if (token) {
         // Container reuse, simply process the event with the key in memory
@@ -87,6 +88,7 @@ exports.handler = function (event, context) {
         });
     } else {
         context.fail("Token has not been set.");
+        // return cb(new Error('no token'));
     }
 };
 
@@ -95,7 +97,7 @@ var processEvent = function(event, context) {
     var params = qs.parse(body);
     var requestToken = params.token;
     if (requestToken !== token) {
-        console.error("Request token (" + requestToken + ") does not match exptected");
+        console.error("Request token (" + requestToken + ") does not match expected");
         context.fail("Invalid request token");
     }
 
@@ -104,7 +106,6 @@ var processEvent = function(event, context) {
     var channel = params.channel_name;
     var commandText = params.text;
 
-    //context.succeed(user + " invoked " + command + " in " + channel + " with the following text: " + commandText);
     var match = /^go +(.+)$/.exec(commandText);
     if (!match) {
         context.fail("Unknown command");
@@ -122,6 +123,7 @@ var processEvent = function(event, context) {
                         }
                     ]
                 });
+                // return cb(null, {});
             })
             .catch((err) => {
                 console.fail(err);
