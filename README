@@ -1,0 +1,20 @@
+TODO
+====
+
+* icon for morbotron
+* better subtitle line wrapping
+* perhaps constraining the included subtitles to just 1 or 2 timecodes instead of all 3
+* perhaps include metadata of matching episode name and link to wiki
+* convert to Slack app for all Slack teams
+* publish to Slack marketplace
+* enable preview of result before sharing
+* request a summary of episodes and subtitles matches
+* handle slow responses from morbotron API without Slack timing out
+* change `/morbotron go <quote>` to instead:
+ * `/morbotron meme <quote>`
+ * `/morbotron meme /s\d{1,2}e\d{1,2}/ <quote>` # quote filtered to episode id
+ * `/morbotron meme /s\d{1,2}e\d{1,2}/ /\d+/$` # exact episode id and timestamp
+* add `/morbotron find <quote>` to return a list of :
+{{{
+S01E02 89203 "matching subtitle" <links to morbotron.com entry>
+}}}
