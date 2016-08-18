@@ -18,9 +18,7 @@
 // b64lines is base64 meme text but with `/` replaced with `_`
 // returns image.jpeg
 
-// pseudo-code follows:
-
-var AWS = require('aws-sdk');
+var AWS;
 var rp = require('request-promise');
 var qs = require('qs');
 var token;
@@ -57,9 +55,15 @@ function getMemeImageUrl(searchText) {
                 var encoded = new Buffer(lines).toString('base64')
                     .replace(/\+/g, '-').replace(/\//g, '_');
 
-                var url = `https://morbotron.com/meme/${this.episode}/${this.timestamp}.jpg`;
-                var querystring = qs.stringify({ b64lines: encoded })
-                return `${url}?${querystring}`;
+                var querystring = qs.stringify({ b64lines: encoded });
+                var imageUrl = `https://morbotron.com/meme/${this.episode}/${this.timestamp}.jpg?${querystring}`;
+
+                var captionUrl = `https://morbotron.com/caption/${this.episode}/${this.timestamp}`;
+
+                return {
+                    captionUrl: captionUrl,
+                    imageUrl: imageUrl,
+                };
             } else {
                 throw new Error('No subtitles for search result');
             }
@@ -76,6 +80,9 @@ exports.handler = function (event, context) {
         var encryptedBuf = new Buffer(kmsEncryptedToken, 'base64');
         var cipherText = {CiphertextBlob: encryptedBuf};
 
+        if (!AWS) {
+            AWS = require('aws-sdk');
+        }
         var kms = new AWS.KMS();
         kms.decrypt(cipherText, function (err, data) {
             if (err) {
@@ -112,14 +119,16 @@ var processEvent = function(event, context) {
     } else {
         var searchText = match[1];
         getMemeImageUrl(searchText)
-            .then((url) => {
+            .then((result) => {
                 // TODO respond via response_url to bypass 3-second timeout https://api.slack.com/slash-commands#responding_to_a_command
                 context.succeed({
                     response_type: 'in_channel',
                     attachments: [
+                        // https://api.slack.com/docs/message-attachments
                         {
                             title: searchText,
-                            image_url: url,
+                            title_link: result.captionUrl,
+                            image_url: result.imageUrl,
                         }
                     ]
                 });
