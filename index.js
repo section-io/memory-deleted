@@ -70,6 +70,7 @@ function getMemeImageUrl(searchText) {
         });
     return promise;
 }
+exports.getMemeImageUrl = getMemeImageUrl;
 
 //exports.handler = function (event, context, cb) {
 exports.handler = function (event, context) {
