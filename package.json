@@ -5,7 +5,7 @@
     "main": "index.js",
     "repository": "https://github.com/section-io/memory-deleted",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "mocha test --recursive"
     },
     "author": "Jason Stangroome",
     "license": "MIT",
@@ -13,5 +13,9 @@
         "qs": "^6.2.1",
         "request": "^2.74.0",
         "request-promise": "^4.1.1"
+    },
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "mocha": "^3.0.2"
     }
 }

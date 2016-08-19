@@ -81,7 +81,12 @@ exports.handler = function (event, context) {
         var cipherText = {CiphertextBlob: encryptedBuf};
 
         if (!AWS) {
-            AWS = require('aws-sdk');
+            try {
+                AWS = require('aws-sdk');
+            } catch (err) {
+                context.fail(err);
+                return;
+            }
         }
         var kms = new AWS.KMS();
         kms.decrypt(cipherText, function (err, data) {
