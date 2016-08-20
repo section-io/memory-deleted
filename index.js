@@ -5,55 +5,12 @@
 // {"Episode":{"Id":322,"Key":"S05E10","Season":5,"EpisodeNumber":10,"Title":"The Farnsworth Parabox","Director":"Ron Hughart","Writer":"Bill Odenkirk","OriginalAirDate":"8-Jun-03","WikiLink":"https://en.wikipedia.org/wiki/The_Farnsworth_Parabox"},"Frame":{"Id":2100806,"Episode":"S05E10","Timestamp":83182},"Subtitles":[{"Id":160916,"RepresentativeTimestamp":80963,"Episode":"S05E10","StartTimestamp":80121,"EndTimestamp":82207,"Content":"So, will you go out with me?","Language":"en"},{"Id":160917,"RepresentativeTimestamp":82765,"Episode":"S05E10","StartTimestamp":82249,"EndTimestamp":84001,"Content":"Good news, everyone.","Language":"en"},{"Id":160918,"RepresentativeTimestamp":85501,"Episode":"S05E10","StartTimestamp":84043,"EndTimestamp":86837,"Content":"I'm still technically alive. Yes.","Language":"en"}],"Nearby":[{"Id":2100800,"Episode":"S05E10","Timestamp":82348},{"Id":2100802,"Episode":"S05E10","Timestamp":82565},{"Id":2100803,"Episode":"S05E10","Timestamp":82765},{"Id":2100806,"Episode":"S05E10","Timestamp":83182},{"Id":2100808,"Episode":"S05E10","Timestamp":83399},{"Id":2100807,"Episode":"S05E10","Timestamp":83599},{"Id":2100815,"Episode":"S05E10","Timestamp":83816}]}
 
 var AWS;
-var rp = require('request-promise');
 var qs = require('qs');
+var morbotron = require('./morbotron');
 var token;
 
 const kmsEncryptedToken = 'AQECAHgQgkf5FS+MdwrQzHaZikgLKo3iOHDmv/38KcoCalmIkQAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJhRw/N1/qR+Vsx5rwIBEIAz86ICuPp++XHkbYB+jeIlWWQuK2ojs9aLifdodVpnc04Vlk3beVbXesndjLDZLY21WNs5';
 
-function getMemeImageUrl(searchText) {
-
-    var promise = rp({ url: 'https://morbotron.com/api/search', qs: { q: searchText }, json: true })
-        .then((json) => {
-            if (json.length && json[0].Episode && json[0].Timestamp) {
-                this.episode = json[0].Episode;
-                this.timestamp = json[0].Timestamp;
-                return rp({ url: 'https://morbotron.com/api/caption', qs: {
-                    e: this.episode,
-                    t: this.timestamp,
-                }, json: true });
-            } else {
-                throw new Error('No search results');
-            }
-        })
-        .then((json) => {
-            if (json.Subtitles && json.Subtitles.length) {
-                var lines = json.Subtitles
-                    .sort(function (a, b) {
-                        return a.RepresentativeTimestamp - b.RepresentativeTimestamp;
-                    })
-                    .map(sub => sub.Content)
-                    .join('\n');
-
-                var encoded = new Buffer(lines).toString('base64')
-                    .replace(/\+/g, '-').replace(/\//g, '_');
-
-                var querystring = qs.stringify({ b64lines: encoded });
-                var imageUrl = `https://morbotron.com/meme/${this.episode}/${this.timestamp}.jpg?${querystring}`;
-
-                var captionUrl = `https://morbotron.com/caption/${this.episode}/${this.timestamp}`;
-
-                return {
-                    captionUrl: captionUrl,
-                    imageUrl: imageUrl,
-                };
-            } else {
-                throw new Error('No subtitles for search result');
-            }
-        });
-    return promise;
-}
-exports.getMemeImageUrl = getMemeImageUrl;
 
 //exports.handler = function (event, context, cb) {
 exports.handler = function (event, context) {
@@ -107,7 +64,7 @@ var processEvent = function(event, context) {
         context.fail("Unknown command");
     } else {
         var searchText = match[1];
-        getMemeImageUrl(searchText)
+        morbotron.getMemeImageUrl(searchText)
             .then((result) => {
                 // TODO respond via response_url to bypass 3-second timeout https://api.slack.com/slash-commands#responding_to_a_command
                 context.succeed({
