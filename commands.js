@@ -2,18 +2,8 @@
 
 module.exports = function Commands (morbotron, slack) {
 
-    this.processCommand = function processCommand (params) {
-
-        var commandText = params.text;
-        var responseUrl = params.response_url;
-
-        var match = /^go +(.+)$/.exec(commandText);
-        if (!match) {
-            return Promise.reject("Unknown command");
-        }
-
-        var searchText = match[1];
-        var result = morbotron.getMemeImageUrl(searchText)
+    function processMeme (responseUrl, searchText) {
+        morbotron.getMemeImageUrl(searchText)
             .then((result) => {
 
                 return slack.respond(responseUrl, {
@@ -36,6 +26,20 @@ module.exports = function Commands (morbotron, slack) {
         return Promise.resolve({
             text: `Finding meme for "${searchText}"...`
         });
+    }
+
+    this.processCommand = function processCommand (params) {
+
+        var commandText = params.text;
+        var responseUrl = params.response_url;
+
+        var match = /^go +(.+)$/.exec(commandText);
+        if (match) {
+            var searchText = match[1];
+            return processMeme(responseUrl, searchText);
+        }
+
+        return Promise.reject("Unknown command");
     };
 
 };
