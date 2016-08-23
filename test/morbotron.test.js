@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 
-var index = require('../morbotron');
+var morbotron = require('../morbotron');
 
 describe('morbotron', function () {
 
@@ -14,7 +14,7 @@ describe('morbotron', function () {
 
             it('should have an imageUrl', function () {
 
-                var result = index.getMemeImageUrl('good news everyone');
+                var result = morbotron.getMemeImageUrl('good news everyone');
                 return result.then(function (result) {
                     expect(result.imageUrl).match(/^https:\/\/morbotron\.com\/meme\/S\d{2}E\d{2}\/\d+\.jpg\?b64lines=.+/);
                 });
@@ -23,7 +23,7 @@ describe('morbotron', function () {
 
             it('should have an captionUrl', function () {
 
-                var result = index.getMemeImageUrl('good news everyone');
+                var result = morbotron.getMemeImageUrl('good news everyone');
                 return result.then(function (result) {
                     expect(result.captionUrl).match(/^https:\/\/morbotron\.com\/caption\/S\d{2}E\d{2}\/\d+$/);
                 });
@@ -35,7 +35,7 @@ describe('morbotron', function () {
         describe('find nothing', function () {
 
             it('should reject promise', function () {
-                var result = index.getMemeImageUrl('kjfkhduerureujskjshlkjekurruruzqxcq');
+                var result = morbotron.getMemeImageUrl('kjfkhduerureujskjshlkjekurruruzqxcq');
                 return result.then(function () {
                     return Promise.reject();
                 }, function (err) {
