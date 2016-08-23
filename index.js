@@ -2,9 +2,10 @@ var AWS;
 var qs = require('qs');
 var Commands = require('./commands');
 var morbotron = require('./morbotron');
+var slack = require('./slack');
 var token;
 
-var commands = new Commands(morbotron);
+var commands = new Commands(morbotron, slack);
 
 const kmsEncryptedToken = 'AQECAHgQgkf5FS+MdwrQzHaZikgLKo3iOHDmv/38KcoCalmIkQAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJhRw/N1/qR+Vsx5rwIBEIAz86ICuPp++XHkbYB+jeIlWWQuK2ojs9aLifdodVpnc04Vlk3beVbXesndjLDZLY21WNs5';
 
