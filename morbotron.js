@@ -25,7 +25,7 @@ function filterAndSortSubtitles(subtitles, language) {
     return result;
 }
 
-function getMemeImageUrl(searchText) {
+function getMemeImageUrl(searchText, episode) {
     var data = {};
 
     // GET https://morbotron.com/api/search?q=good%20news%20everyone HTTP/1.1
@@ -34,8 +34,16 @@ function getMemeImageUrl(searchText) {
     var promise = rp({ url: 'https://morbotron.com/api/search', qs: { q: searchText }, json: true })
         .then((json) => {
             if (json.length && json[0].Episode && json[0].Timestamp) {
-                data.episode = json[0].Episode;
-                data.timestamp = json[0].Timestamp;
+                var item = json[0];
+                if (episode) {
+                    var filtered = json.filter(j => j.Episode === episode);
+                    if (!filtered.length) {
+                        throw new Error('No search results');
+                    }
+                    item = filtered[0]
+                }
+                data.episode = item.Episode;
+                data.timestamp = item.Timestamp;
 
                 // GET https://morbotron.com/api/caption?e=S05E10&t=83182 HTTP/1.1
                 // {"Episode":{"Id":322,"Key":"S05E10","Season":5,"EpisodeNumber":10,"Title":"The Farnsworth Parabox","Director":"Ron Hughart","Writer":"Bill Odenkirk","OriginalAirDate":"8-Jun-03","WikiLink":"https://en.wikipedia.org/wiki/The_Farnsworth_Parabox"},"Frame":{"Id":2100806,"Episode":"S05E10","Timestamp":83182},"Subtitles":[{"Id":160916,"RepresentativeTimestamp":80963,"Episode":"S05E10","StartTimestamp":80121,"EndTimestamp":82207,"Content":"So, will you go out with me?","Language":"en"},{"Id":160917,"RepresentativeTimestamp":82765,"Episode":"S05E10","StartTimestamp":82249,"EndTimestamp":84001,"Content":"Good news, everyone.","Language":"en"},{"Id":160918,"RepresentativeTimestamp":85501,"Episode":"S05E10","StartTimestamp":84043,"EndTimestamp":86837,"Content":"I'm still technically alive. Yes.","Language":"en"}],"Nearby":[{"Id":2100800,"Episode":"S05E10","Timestamp":82348},{"Id":2100802,"Episode":"S05E10","Timestamp":82565},{"Id":2100803,"Episode":"S05E10","Timestamp":82765},{"Id":2100806,"Episode":"S05E10","Timestamp":83182},{"Id":2100808,"Episode":"S05E10","Timestamp":83399},{"Id":2100807,"Episode":"S05E10","Timestamp":83599},{"Id":2100815,"Episode":"S05E10","Timestamp":83816}]}

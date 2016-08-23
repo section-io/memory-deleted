@@ -48,6 +48,39 @@ describe('commands', function () {
 
         });
 
+        it('should succeed with slack response for `meme <episode> <search text>`', function () {
+
+            var params = {
+                text: 'meme s1e07 good news everyone',
+                response_url: '_RESPONSE_URL_',
+            };
+
+            var morbotron = {
+                getMemeImageUrl: function (searchText, episode) {
+                    expect(episode).equal('S01E07');
+                    return Promise.resolve({
+                        captionUrl: '_CAPTION_URL_',
+                        imageUrl: '_IMAGE_URL_',
+                    });
+                },
+            };
+
+            var slack = {};
+            var slackPromise = new Promise(function (resolve) {
+                slack.respond = function (url, message) {
+                    expect(message.attachments).ok;
+                    expect(message.attachments.length).to.equal(1);
+                    return resolve();
+                };
+            })
+
+            var commands = new Commands(morbotron, slack);
+            var commandPromise = commands.processCommand(params);
+
+            return Promise.all([commandPromise, slackPromise]);
+
+        });
+
         it('should succeed with slack response for `find <search text>`', function () {
 
             var params = {

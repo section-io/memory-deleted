@@ -1,9 +1,25 @@
 'use strict';
 
+function padEpisodeComponent(component) {
+    if (component.length === 2) {
+        return component;
+    }
+    return `0${component}`;
+}
+
 module.exports = function Commands (morbotron, slack) {
 
     function processMeme (responseUrl, searchText) {
-        morbotron.getMemeImageUrl(searchText)
+        var episode;
+        var match = /^s(\d{1,2})e(\d{1,2}) +(.+)$/.exec(searchText);
+        if (match) {
+            var season = padEpisodeComponent(match[1]);
+            var epNum = padEpisodeComponent(match[2]);
+            episode = `S${season}E${epNum}`;
+            searchText = match[3];
+        }
+
+        morbotron.getMemeImageUrl(searchText, episode)
             .then((result) => {
 
                 return slack.respond(responseUrl, {

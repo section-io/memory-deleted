@@ -32,6 +32,19 @@ describe('morbotron', function () {
 
         });
 
+        describe('find "S01E07 good news everyone"', function () {
+
+            it('should have an imageUrl for S01E07', function () {
+
+                var result = morbotron.getMemeImageUrl('good news everyone', 'S01E07');
+                return result.then(function (result) {
+                    expect(result.imageUrl).match(/^https:\/\/morbotron\.com\/meme\/S01E07\/\d+\.jpg\?b64lines=.+/);
+                });
+
+            });
+
+        });
+
         describe('find nothing', function () {
 
             it('should reject promise', function () {
