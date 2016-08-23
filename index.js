@@ -1,6 +1,6 @@
 var AWS;
 var qs = require('qs');
-var morbotron = require('./morbotron');
+var commands = require('./commands');
 var token;
 
 const kmsEncryptedToken = 'AQECAHgQgkf5FS+MdwrQzHaZikgLKo3iOHDmv/38KcoCalmIkQAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJhRw/N1/qR+Vsx5rwIBEIAz86ICuPp++XHkbYB+jeIlWWQuK2ojs9aLifdodVpnc04Vlk3beVbXesndjLDZLY21WNs5';
@@ -48,35 +48,12 @@ var processEvent = function(event, context) {
         context.fail("Invalid request token");
     }
 
-    var user = params.user_name;
-    var command = params.command;
-    var channel = params.channel_name;
-    var commandText = params.text;
-
-    var match = /^go +(.+)$/.exec(commandText);
-    if (!match) {
-        context.fail("Unknown command");
-    } else {
-        var searchText = match[1];
-        morbotron.getMemeImageUrl(searchText)
-            .then((result) => {
-                // TODO respond via response_url to bypass 3-second timeout https://api.slack.com/slash-commands#responding_to_a_command
-                context.succeed({
-                    response_type: 'in_channel',
-                    attachments: [
-                        // https://api.slack.com/docs/message-attachments
-                        {
-                            title: searchText,
-                            title_link: result.captionUrl,
-                            image_url: result.imageUrl,
-                        }
-                    ]
-                });
-                // return cb(null, {});
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
+    commands.processCommand(params)
+        .then(function (result) {
+            context.succeed(result);
+        }, function (err) {
+            context.fail(err);
+        });
+        // return cb(null, {});
 };
 exports.processEvent = processEvent;
