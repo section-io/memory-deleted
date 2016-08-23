@@ -10,6 +10,13 @@ function middle (ary) {
     return ary[Math.floor(ary.length / 2)];
 }
 
+function convertSubtitlesToMultilineText(subtitles) {
+    var multiline = filterAndSortSubtitles(subtitles)
+        .map(sub => sub.Content)
+        .join('\n');
+    return multiline;
+}
+
 function filterAndSortSubtitles(subtitles, language) {
     language = language || 'en';
     var result = subtitles
@@ -43,9 +50,7 @@ function getMemeImageUrl(searchText) {
         })
         .then((json) => {
             if (json.Subtitles && json.Subtitles.length) {
-                var lines = filterAndSortSubtitles(json.Subtitles)
-                    .map(sub => sub.Content)
-                    .join('\n');
+                var lines = convertSubtitlesToMultilineText(json.Subtitles);
 
                 var encoded = new Buffer(lines).toString('base64')
                     .replace(/\+/g, '-').replace(/\//g, '_');
@@ -68,6 +73,7 @@ function getMemeImageUrl(searchText) {
 
 function findCaptions(searchText) {
     const maximumResults = 5;
+    //TODO limit minimum timestamp different between matches
 
     // GET https://morbotron.com/api/search?q=good%20news%20everyone HTTP/1.1
     // [{"Id":2100806,"Episode":"S05E10","Timestamp":83182},{"Id":2434483,"Episode":"S08E10","Timestamp":33700},{"Id":2017055,"Episode":"S05E02","Timestamp":422789},{"Id":1887280,"Episode":"S03E15","Timestamp":176408},{"Id":2017056,"Episode":"S05E02","Timestamp":422989},{"Id":1887276,"Episode":"S03E15","Timestamp":175574},{"Id":1899136,"Episode":"S02E13","Timestamp":43592},{"Id":2470050,"Episode":"S10E03","Timestamp":120037},{"Id":1869701,"Episode":"S02E10","Timestamp":634934},{"Id":2071423,"Episode":"S06E01","Timestamp":95220},{"Id":2198965,"Episode":"S07E01","Timestamp":691315},{"Id":2014966,"Episode":"S04E10","Timestamp":33667},{"Id":2180886,"Episode":"S06E03","Timestamp":1898478},{"Id":2173590,"Episode":"S05E15","Timestamp":840156},{"Id":2180915,"Episode":"S06E03","Timestamp":1901189},{"Id":1736727,"Episode":"S01E07","Timestamp":330736},{"Id":1907743,"Episode":"S02E14","Timestamp":34083},{"Id":2359377,"Episode":"S09E09","Timestamp":481022},{"Id":1919501,"Episode":"S02E14","Timestamp":1251244},{"Id":1919480,"Episode":"S02E14","Timestamp":1249075},{"Id":2324187,"Episode":"S07E12","Timestamp":21896},{"Id":2374774,"Episode":"S08E03","Timestamp":336294},{"Id":2073843,"Episode":"S06E01","Timestamp":415541},{"Id":2374769,"Episode":"S08E03","Timestamp":336086},{"Id":1869699,"Episode":"S02E10","Timestamp":634517},{"Id":2483396,"Episode":"S10E05","Timestamp":476851},{"Id":1769402,"Episode":"S01E09","Timestamp":367477},{"Id":1990322,"Episode":"S04E08","Timestamp":81530},{"Id":2324188,"Episode":"S07E12","Timestamp":21479},{"Id":2001932,"Episode":"S05E01","Timestamp":217567},{"Id":2017046,"Episode":"S05E02","Timestamp":422155},{"Id":1887275,"Episode":"S03E15","Timestamp":174540},{"Id":1919500,"Episode":"S02E14","Timestamp":1250577},{"Id":2434475,"Episode":"S08E10","Timestamp":32032},{"Id":1778784,"Episode":"S03E07","Timestamp":62845},{"Id":2483391,"Episode":"S10E05","Timestamp":476017}]
@@ -102,10 +108,12 @@ function findCaptions(searchText) {
                 results: results.map(result => {
                     return {
                         episode: result.Frame.Episode,
+                        episodeTitle: result.Episode.Title,
+                        episodeWikiUrl: result.Episode.WikiLink,
                         timestamp: result.Frame.Timestamp,
                         captionUrl: `https://morbotron.com/caption/${result.Frame.Episode}/${result.Frame.Timestamp}`,
                         thumbUrl: `https://morbotron.com/img/${result.Frame.Episode}/${result.Frame.Timestamp}/small.jpg`,
-                        subtitle: middle(filterAndSortSubtitles(result.Subtitles)).Content,
+                        subtitles: convertSubtitlesToMultilineText(result.Subtitles),
                     };
                 }),
             };

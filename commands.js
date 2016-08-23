@@ -35,14 +35,14 @@ module.exports = function Commands (morbotron, slack) {
                 // TODO different response if zero matches
                 // TODO escape searchUrl and searchText control sequences (ie `&`, `<`, `>`, maybe `|`)
                 return slack.respond(responseUrl, {
-                    response_type: 'in_channel',
-                    text: `<${result.searchUrl}|${searchText}>`,
+                    response_type: 'ephemeral',
+                    text: `Morbotron results for "<${result.searchUrl}|${searchText}>"`,
                     attachments: result.results.map(function (item) {
                         // https://api.slack.com/docs/message-attachments
                         return {
-                            title: `${item.episode} @ ${item.timestamp}`,
+                            title: `${item.episode} ${item.episodeTitle} @ ${item.timestamp}`,
                             title_link: item.captionUrl,
-                            text: item.subtitle,
+                            text: item.subtitles,
                             thumb_url: item.thumbUrl,
                         }
                     }),
