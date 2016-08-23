@@ -64,7 +64,7 @@ module.exports = function Commands (morbotron, slack) {
         var commandText = params.text;
         var responseUrl = params.response_url;
 
-        var match = /^go +(.+)$/.exec(commandText);
+        var match = /^(?:meme|go) +(.+)$/.exec(commandText);
         if (match) {
             var searchText = match[1];
             return processMeme(responseUrl, searchText);

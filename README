@@ -9,8 +9,6 @@ TODO
 * convert to Slack app for all Slack teams
 * publish to Slack marketplace
 * enable preview of result before sharing
-* change `/morbotron go <quote>` to instead:
- * `/morbotron meme <quote>`
- * `/morbotron meme /s\d{1,2}e\d{1,2}/ <quote>` # quote filtered to episode id
- * `/morbotron meme /s\d{1,2}e\d{1,2}/ /\d+/$` # exact episode id and timestamp
+* support `/morbotron meme /s\d{1,2}e\d{1,2}/ <quote>` # quote filtered to episode id
+* support `/morbotron meme /s\d{1,2}e\d{1,2}/ /\d+/$` # exact episode id and timestamp
 * put IAM KMS policy into git

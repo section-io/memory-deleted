@@ -8,10 +8,10 @@ describe('commands', function () {
 
     describe('processCommand', function () {
 
-        it('should succeed with slack response for `go <search text>`', function () {
+        it('should succeed with slack response for `meme <search text>`', function () {
 
             var params = {
-                text: 'go good news everyone',
+                text: 'meme good news everyone',
                 response_url: '_RESPONSE_URL_',
             };
 
