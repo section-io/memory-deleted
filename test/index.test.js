@@ -12,20 +12,16 @@ describe('index', function () {
             "body": "token=FLOOP&user_name=fry&command=morbotron&channel_name=general&text=good%20news%20everyone"
         };
 
-        function createExpectFailContext(done) {
-            return {
-                fail: function () {
-                    done();
-                },
-                success: function () {
-                    done(new Error('unexpected success'))
-                }
-            };
-        }
+        var context = {};
 
         it('should need a token', function (done) {
 
-            index.handler(anEvent, createExpectFailContext(done));
+            index.handler(anEvent, context, function (err) {
+                if (err) {
+                    return done();
+                }
+                return done(new Error('unexpected success'));
+            });
 
         });
 
