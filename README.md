@@ -56,7 +56,6 @@ Follow these steps to deploy the AWS Lambda function:
 ## Todo
 
 * icon for morbotron
-* JS hinting
 * better subtitle line wrapping
 * perhaps constraining the included subtitles to just 1 or 2 timecodes instead of all lines
 * perhaps include a link to episode wiki

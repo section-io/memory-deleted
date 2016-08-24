@@ -5,7 +5,7 @@
     "main": "index.js",
     "repository": "https://github.com/section-io/memory-deleted",
     "scripts": {
-        "test": "mocha test --recursive"
+        "test": "jshint *.js && jscs *.js && mocha test --recursive"
     },
     "author": "Jason Stangroome",
     "license": "MIT",
@@ -16,6 +16,8 @@
     },
     "devDependencies": {
         "chai": "^3.5.0",
+        "jscs": "^3.0.7",
+        "jshint": "^2.9.3",
         "mocha": "^3.0.2"
     }
 }

@@ -3,7 +3,7 @@
 var qs = require('qs');
 var rp = require('request-promise');
 
-function middle (ary) {
+function middle(ary) {
     if (!ary || !ary.length) {
         return undefined;
     }
@@ -21,7 +21,7 @@ function filterAndSortSubtitles(subtitles, language) {
     language = language || 'en';
     var result = subtitles
         .filter(subtitle => subtitle.Language === language)
-        .sort((a, b) => a.RepresentativeTimestamp - b.RepresentativeTimestamp)
+        .sort((a, b) => a.RepresentativeTimestamp - b.RepresentativeTimestamp);
     return result;
 }
 
@@ -40,7 +40,7 @@ function getMemeImageUrl(searchText, episode) {
                     if (!filtered.length) {
                         throw new Error('No search results');
                     }
-                    item = filtered[0]
+                    item = filtered[0];
                 }
                 data.episode = item.Episode;
                 data.timestamp = item.Timestamp;

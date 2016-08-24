@@ -28,6 +28,10 @@ package:
 #    - node_modules
   exclude:
     - vagrant
+    - node_modules/chai/
+    - node_modules/jscs/
+    - node_modules/jshint/
+    - node_modules/mocha/
 #  artifact: my-service-code.zip
 
 functions:

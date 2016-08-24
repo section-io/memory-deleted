@@ -7,9 +7,9 @@ function padEpisodeComponent(component) {
     return `0${component}`;
 }
 
-module.exports = function Commands (morbotron, slack) {
+module.exports = function Commands(morbotron, slack) {
 
-    function processMeme (responseUrl, searchText) {
+    function processMeme(responseUrl, searchText) {
         var episode;
         var match = /^s(\d{1,2})e(\d{1,2}) +(.+)$/.exec(searchText);
         if (match) {
@@ -44,7 +44,7 @@ module.exports = function Commands (morbotron, slack) {
         });
     }
 
-    function processFind (responseUrl, searchText) {
+    function processFind(responseUrl, searchText) {
         morbotron.findCaptions(searchText)
             .then(function (result) {
 
@@ -60,7 +60,7 @@ module.exports = function Commands (morbotron, slack) {
                             title_link: item.captionUrl,
                             text: item.subtitles,
                             thumb_url: item.thumbUrl,
-                        }
+                        };
                     }),
                 });
 
@@ -75,20 +75,22 @@ module.exports = function Commands (morbotron, slack) {
         });
     }
 
-    this.processCommand = function processCommand (params) {
+    this.processCommand = function processCommand(params) {
 
         var commandText = params.text;
         var responseUrl = params.response_url;
 
+        var searchText;
+
         var match = /^(?:meme|go) +(.+)$/.exec(commandText);
         if (match) {
-            var searchText = match[1];
+            searchText = match[1];
             return processMeme(responseUrl, searchText);
         }
 
         match = /^find +(.+)$/.exec(commandText);
         if (match) {
-            var searchText = match[1];
+            searchText = match[1];
             return processFind(responseUrl, searchText);
         }
 

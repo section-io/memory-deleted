@@ -1,3 +1,5 @@
+'use strict';
+
 var AWS;
 var qs = require('qs');
 var Commands = require('./commands');
@@ -9,7 +11,7 @@ var commands = new Commands(morbotron, slack);
 
 const kmsEncryptedToken = 'AQECAHgQgkf5FS+MdwrQzHaZikgLKo3iOHDmv/38KcoCalmIkQAAAHYwdAYJKoZIhvcNAQcGoGcwZQIBADBgBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJhRw/N1/qR+Vsx5rwIBEIAz86ICuPp++XHkbYB+jeIlWWQuK2ojs9aLifdodVpnc04Vlk3beVbXesndjLDZLY21WNs5';
 
-exports.handler = function (event, context, callback) {
+exports.handler = function (event, ignore, callback) {
     if (token) {
         // Container reuse, simply process the event with the key in memory
         processEvent(event, callback);
@@ -38,7 +40,7 @@ exports.handler = function (event, context, callback) {
     }
 };
 
-var processEvent = function(event, callback) {
+function processEvent(event, callback) {
     var body = event.body;
     var params = qs.parse(body);
     var requestToken = params.token;
@@ -53,5 +55,5 @@ var processEvent = function(event, callback) {
         }, function (err) {
             return callback(err);
         });
-};
+}
 exports.processEvent = processEvent;
